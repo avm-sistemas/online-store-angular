@@ -27,7 +27,7 @@
     <div class="collapse navbar-collapse desktop-viw-nav" id="navbarNav">
       <!-- Company Name -->
       <a *ngIf="headerConfig.showLogo" class="navbar-brand text-yellow title-desktop" href="javascript:void(0)"
-        (click)="onClickLogo()">Y Company</a>
+        (click)="onClickLogo()">Marketplace</a>
       <ul *ngIf="headerConfig.showCategories" class="navbar-nav ul-categories me-auto mb-lg-0">
         <!-- Categories (Men, Women, Kids) -->
         <li class="nav-item">
@@ -52,7 +52,7 @@
       <!-- User Icon and Checkout Icon on the Right -->
       <div class="d-flex">
         <!-- User Icon -->
-        <a *ngIf="headerConfig.showUser" href="#" class="text-white me-3">
+        <a *ngIf="headerConfig.showUser" href="/user" class="text-white me-3">
           <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
         </a>
 

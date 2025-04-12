@@ -20,5 +20,11 @@ call ng generate service core/services/auth
 :: Generate guard
 call ng generate guard core/guards/auth
 
+:: Generate User components
+call ng generate module user --routing
+call ng generate component user/components/user
+call ng generate component user/components/login
+call ng generate component user/components/rescue
+
 @echo All components, modules, services, and guards have been successfully generated!
 pause
