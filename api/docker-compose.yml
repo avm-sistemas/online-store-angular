@@ -1,0 +1,22 @@
+name: "online-store-api"
+
+services:
+    api:
+      build: '.'
+      ports:
+        - 3000:3000
+      environment:
+        - MONGO_INITDB_DATABASE=admin
+        - MONGO_INITDB_ROOT_USERNAME=root
+        - MONGO_INITDB_ROOT_PASSWORD=mongorootpwd
+        - MONGO_PORT=27018      
+
+        - MINIO_ROOT_USER=minioadmin
+        - MINIO_ROOT_PASSWORD=minioadmin
+        - MINIO_PORT=5106
+        - MINIO_PORT_UI=5112
+
+        - MAIL_PORT=1025
+        - MAIL_PORT_UI=1080
+
+        - JWT_SECRET="lskdjlksjdflkjsdg384o7u5t98oe5yo8dj4ot8ujoe8jgiljg59gj"

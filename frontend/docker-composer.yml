@@ -1,0 +1,13 @@
+name: "online-store-app"
+
+services:
+  webapp:
+    build: "."
+    tags:      
+      - "online-store-app-app"      
+    image: avmesquita/online-store-app
+    ports:
+      - 80:80
+    environment:
+      - API-PORT=3000      
+      - GTAG='G-0BS7XFKQDG'
