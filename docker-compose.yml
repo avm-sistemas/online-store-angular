@@ -1,0 +1,95 @@
+name: "online-store-app"
+
+volumes:
+  online-store-database:
+  online-store-storage:
+  online-store-mail:
+
+services:
+  mongo:
+    image: mongodb/mongodb-community-server:latest
+    restart: unless-stopped
+    env_file: ./.env
+    ports: 
+      - 0.0.0.0:27018:27017
+      - 0.0.0.0:28018:28017
+    volumes:
+      - online-store-database:/data/db
+    environment:
+        - MONGO_INITDB_DATABASE: $MONGO_INITDB_DATABASE
+        - MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+        - MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+        - bind_ip=::,0.0.0.0  
+    networks:
+      - default
+
+  api:
+    build: "./api"
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $API_PORT:$API_PORT
+    environment:
+      MONGODB_HOST: mongo
+      MONGODB_PORT: $MONGO_PORT
+      MONGODB_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGODB_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+      DEBUG: "false"
+      INSECURE_AUTH: "false"
+      JWT_SECRET: $JWT_SECRET
+      PORT: $API_PORT
+    depends_on:
+      mongo
+    networks:
+      - default
+
+  frontend:
+    build: "./frontend"
+    restart: unless-stopped
+    depends_on:
+      api
+    ports:
+      - 80:80
+    networks:
+      - default
+
+  cache:
+    image: redis
+    healthcheck:
+      test: ["CMD-SHELL", "[ $$(redis-cli ping) = 'PONG' ]"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 5s
+      start_period: 30s
+
+  minio:
+    image: minio/minio
+    env_file: ./.env
+    volumes: 
+      - "online-store-storage:/data"
+    environment:
+      - MINIO_ROOT_USER=$MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD=MINIO_ROOT_PASSWORD
+    command: server /data/minio/ --console-address :9001
+    ports:
+      - $MINIO_PORT:9000
+      - $MINIO_PORT_UI:9001
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - $MAIL_PORT:1025
+      - $MAIL_PORT_UI:1080
+    environment:
+      - TZ=Europe/Lisbon
+      - MAILDEV_WEB_PORT=$MAIL_PORT_UI
+      - MAILDEV_SMTP_PORT=$MAIL_PORT
+      - MAILDEV_MAIL_DIRECTORY=/home/maildev      
+    volumes:
+      - online-store-mail:/home/maildev:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"      
+
